@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Space Invader</title>
+		<link rel="stylesheet" href="css/spaceinvader.css" media="screen" title="no title">
+			<script src="js/variable.js"></script>
+			<script src="js/audio.js"></script>
+			<script src="js/gamefunction.js"></script>
+			<script src="js/game.js"></script>
+			<script src="js/moveennemi.js"></script>
+			<script>
+				document.addEventListener('DOMContentLoaded', (function(){
+						//on initi le jeu
+						initGame();
+					
+				}));
+		</script>
+	</head>
+
+	<body>		
+		<div id="ecranStart">
+			<h1>Space Invader</h1>
+			<h1>High Score : </h1>
+			<h2>New Game</h2>
+			<h2>Choix du skin</h2>
+			<ul id="selectSkin">
+				<li class="classic item-skin" data-skin="classic"><img src="css/classic/vaisseau.png" /></li>
+				<li class="item-skin" data-skin="burger"><img src="css/burger/burger.png" /></li>
+			</ul>
+		</div>
+
+		<div id="container">
+			<h3 id="score">Score : </h3>
+			<h3 id="vie">Vies :
+				<div class="pv" id="vie-0"></div>
+				<div class="pv" id="vie-1"></div>
+				<div class="pv" id="vie-2"></div>
+			</h3>
+
+			<div id="blockennemi">
+				<div id="enemis"></div>
+			</div>
+			
+			<div class="shield"></div>
+			<div class="shield"></div>
+			<div class="shield"></div>
+
+			<div id="joueur"></div>
+
+		</div>
+
+
+
+
+
+		<div id="gameOver">
+			<h1>Space Invader</h1>
+			<h1>GAME OVER</h1>
+			<h2>Score : </h2>
+			<h2>Restart</h2>
+			<h2>Quit</h2>
+		</div>
+
+
+		<div id="pause">
+			<h1>Pause</h1>
+		</div>
+		
+		<div id="scoreScreen">
+			<h1>Victoire</h1>
+		</div>
+
+
+	</body>
+</html>
