@@ -1,0 +1,309 @@
+@keyframes clignotement{ 100% { color: transparent; } }
+
+@font-face {
+	font-family:"space invaders Regular";
+	src:url("font/space_invaders.eot?") format("eot"),
+	url("font/space_invaders.woff") format("woff"),
+	url("font/space_invaders.ttf") format("truetype"),
+	url("font/space_invaders.svg#Space-Invaders") format("svg");
+	font-weight:normal;
+	font-style:normal;
+}
+*{
+  margin:0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "space invaders Regular", "Verdana";
+}
+
+#container, #ecranStart, #gameOver, #pause, #scoreScreen, #option{
+  border : 5px solid #555555;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  background-color: #000000;
+  color: white;
+}
+
+#container{
+	  background-image: url('background.jpg')
+}
+
+#container{
+	overflow: hidden;
+}
+
+#ecranStart{
+  /*display:none;*/
+	background-color: black;
+	background-image: url('iu-mneu-invader.png');
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+#ecranStart h1, #option h1, #gameOver h1{
+	margin-top: 2em;
+	font-size: 3em;
+	text-align: center;
+	color:#ffffff;
+}
+
+#option .option-iu{
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 2%;
+}
+
+#option .iu-sound{
+	margin-top: 2%;
+}
+
+#option span{ 
+	display: block; 
+	padding: 10px; 
+	width: 100%; 
+	margin: 10px;
+}
+
+.option-select-touch{
+	position: absolute;
+	width: 100%; 
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.9);
+	top: 0;
+	left: 0;
+}
+
+#option .touch-assign{ cursor: pointer; }
+#option .touch-assign:hover{ color: white; }
+
+
+#option .button{
+	display: inline-block; 
+	width: 30%;
+	height: 5%;
+	padding: 20px;
+	
+	margin-left: auto;
+	margin-right: auto;
+	color: #00ff11;
+	text-align: center;
+}
+
+#menu-iu { margin-top: 20em; }
+
+#menu-iu .presstart{ color: #00ff11; animation: clignotement 1.2s steps(2) infinite; }
+
+
+#menu-iu h2{
+  margin-top: 1%;
+  text-align: center;
+  color: #ffffff;
+}
+
+#gameOver{
+  /*display: none;*/
+}
+
+#gameOver h1{
+  text-align: center;
+  margin-bottom: 10%;
+  color: #ffffff;
+}
+
+#gameOver h2{
+  text-align: center;
+  color: #ffffff;
+}
+
+#gameOver .gameOver{
+	color: #ff0000;
+	animation: clignotement 1.2s steps(2) infinite;
+}
+
+#gameOver .restart{
+	color: #00ff11;
+	animation: clignotement 1.2s steps(2) infinite;
+}
+
+#gameOver .btn{ margin-top: 3.5%; }
+
+#gameOver .score{
+	display: block;
+}
+
+#gameOver .score h2{
+	display: inline-block;
+	width: 49%;
+}
+
+
+#pause{
+  /*display:none;*/
+  background-color: black;
+}
+
+#pause h1{
+  position: absolute;
+  color: #ffffff;
+  left: 43%;
+  top:40%;
+}
+
+#vie {
+  position: absolute;
+  right: 5%;
+}
+
+.pv{
+  background-color: transparent;
+  background-image: url('coeur.png');
+  background-size: 100% 130%;
+  height: 15px;
+  width: 30px;
+  display: inline-block;
+}
+
+#score {
+	color : #ffffff;
+	position: absolute;
+	padding-left: 5%;
+}
+
+#blockennemi{
+	position: absolute;
+	width: 50%;
+	height: 20%;
+	top: 14%;
+	left: 1%;
+	transition: 2s;
+}
+
+#enemis{
+  height: 17vh;
+}
+
+#joueur {
+  position:absolute;
+  width: 6%;
+  height: 3em;
+  bottom: 50px;
+  left: 5%;
+}
+
+.Missile {
+  position: absolute;
+  background-color:green;
+  width: 0.4%;
+  height : 10px;
+}
+
+.missileEnnemy{
+  position: absolute;
+background-color: red;
+width: 0.4%;
+height: 10px;
+}
+
+.ennemy{
+	position: absolute;
+	background-size: 100% 100%;
+}
+
+/* -- menu des skins -- */
+#selectSkin{
+	margin-left: auto;
+	margin-right: auto;
+	width: 45%;
+	text-align: center;
+}
+#selectSkin li{
+	display: inline-block;
+	width: 50px;
+	height: 50px;
+	margin-left: 30px;
+}
+
+#selectSkin .classic{
+	width: 60px;
+	height: 30px;
+}
+
+#selectSkin img{
+	width: 100%;
+	height: 100%;
+}
+
+
+/* gestion des animations pour les sprites ennemis */
+@keyframes ennemy-3-classic-animation{  100% { background-position: 188% -0%; } }
+.ennemy-classic-3, .ennemy-classic-4{
+	background: url('classic/ennemi.png') no-repeat;
+	background-size: 220% 350%;
+	animation: ennemy-3-classic-animation 1s steps(2) infinite;
+}
+
+@keyframes ennemy-2-classic-animation{  100% { background-position: 186% 53%; } }
+.ennemy-classic-2, .ennemy-classic-1{
+	background: url('classic/ennemi.png') no-repeat;
+	background-size: 220% 350%;
+	background-position: 0% 49%;
+	animation: ennemy-2-classic-animation 1s steps(2) infinite;
+}
+
+@keyframes ennemy-0-classic-animation{  100% { background-position: 186% 100%; } }
+.ennemy-classic-0{
+	background: url('classic/ennemi.png') no-repeat;
+	background-size: 220% 350%;
+	background-position: 0% 100%;
+	animation: ennemy-0-classic-animation 1s steps(2) infinite;
+}
+
+.hero-classic{
+	background-image: url("classic/vaisseau.png");
+	background-size: 100% 100%;
+}
+
+/*.shield{
+	position: absolute;
+	display: block; 
+	width: 250px;
+	height: 150px;
+	background-color: red;
+}*/
+
+/* gestion des animations pour les sprites ennemis */
+@keyframes ennemy-3-burger-animation{  100% { background-position: 188% -0%; } }
+.ennemy-burger-3, .ennemy-burger-4{
+	background: url('burger/ennemis.png') no-repeat;
+	background-size: 220% 350%;
+	animation: ennemy-3-burger-animation 1s steps(2) infinite;
+}
+
+@keyframes ennemy-2-burger-animation{  100% { background-position: 186% 53%; } }
+.ennemy-burger-2, .ennemy-burger-1{
+	background: url('burger/ennemis.png') no-repeat;
+	background-size: 220% 350%;
+	background-position: 0% 49%;
+	animation: ennemy-2-burger-animation 1s steps(2) infinite;
+}
+
+@keyframes ennemy-0-burger-animation{  100% { background-position: 186% 100%; } }
+.ennemy-burger-0{
+	background: url('burger/ennemis.png') no-repeat;
+	background-size: 220% 350%;
+	background-position: 0% 100%;
+	animation: ennemy-0-burger-animation 1s steps(2) infinite;
+}
+
+.hero-burger{
+	background-image: url("burger/burger.png");
+	background-size: 100% 100%;
+}
+
+@media screen and (max-width: 800px){
+	#container, #ecranStart, #gameOver, #pause{
+		width: 100%;
+	}
+}
