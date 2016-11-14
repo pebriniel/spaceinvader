@@ -4,7 +4,6 @@ function Monstre(display){
 	this.display = display;
 }
 
-
 //console.log("dev"+String.fromCharCode(13));
 
 var vscore = 0;
@@ -41,7 +40,17 @@ var gstats = {
 	'dScore' : false, //div des scores dans le jeu
 	
 	'stor': false,
-	'skin' : 'classic' //gestion des skins
+	'skin' : 'classic', //gestion des skins
+	
+	'playSound': true,
+	
+	'vHero': 30, //vitesse du héro 
+	'vHeroWeapon': 10, //vitesse du tir du héro
+	'HeroWeaponMax' : 4,
+	'HeroWeapon' : 2,
+	
+	'vEnnemi': 30, //vitesse du héro
+	'vEnnemiWeapon': 13 //vitesse du héro
 };
 
 pv = 3;

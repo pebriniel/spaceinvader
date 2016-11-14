@@ -20,26 +20,41 @@ function initEnnemy(){
 	}
 }
 
-function initShield(){
-	var shield = document.querySelectorAll('.shield');
-	
-	for(var i = 0; i < shield.length; i ++){
-		
-	}
-}
-
 //on ajoute le tir du joueur
 function weaponAdd(origin){
 	if(gstats.aGame){
 		var missile = document.querySelectorAll('.Missile')
 
-		 if(missile.length < 2){
-			  var myWeap = document.createElement('div');
+		 if(missile.length < gstats.HeroWeaponMax){
+			 console.log('dev');
+			if(gstats.HeroWeapon == 1){
+				var myWeap = document.createElement('div');
 
-			  myWeap.classList.add('Missile');
-			  myWeap.style.left = (origin.offsetLeft + (origin.offsetWidth/2)) + "PX";
-			  myWeap.style.top = (origin.offsetTop - 12)  + "PX";
-			  document.querySelectorAll('#container')[0].appendChild(myWeap);
+				myWeap.classList.add('Missile');
+				myWeap.style.left = (origin.offsetLeft + (origin.offsetWidth/2)) + "PX";
+				myWeap.style.top = (origin.offsetTop - 12)  + "PX";
+				document.querySelectorAll('#container')[0].appendChild(myWeap);
+
+				playSound('fire');
+			}
+			else if(gstats.HeroWeapon == 2){
+				var myWeap = document.createElement('div');
+
+				myWeap.classList.add('Missile');
+				myWeap.style.left = (origin.offsetLeft ) + "PX";
+				myWeap.style.top = (origin.offsetTop - 12)  + "PX";
+				document.querySelectorAll('#container')[0].appendChild(myWeap);
+				
+				var myWeap2 = document.createElement('div');
+
+				myWeap2.classList.add('Missile');
+				myWeap2.style.left = (origin.offsetLeft + (origin.offsetWidth)) + "PX";
+				myWeap2.style.top = (origin.offsetTop - 12)  + "PX";
+				document.querySelectorAll('#container')[0].appendChild(myWeap2);
+				
+				
+				playSound('fire');
+			}
 		 }
 	}
 }
@@ -57,11 +72,11 @@ function weaponMove(){
 		for( var i = 0; i < missile.length; i ++ ) {
 			var posy = missile[i].offsetTop;
 			if( posy >= 0){
-				missile[i].style.top = (posy - 10) + "px";
+				missile[i].style.top = (posy - gstats.vHeroWeapon) + "px";
 				destroy = false;
 			}
 
-			if(destroy || collision(missile[i])){
+			if(destroy || collision(missile[i]) || boundShield(missile[i], "JOUEUR")){
 				removeDiv('dContainer', missile[i]);
 				//weaponRemove(missile[i]);
 				
@@ -109,6 +124,7 @@ function collision(e){
 function score(val){ vscore += val; }
 function scoreShow(){ gstats.dScore.innerHTML = vscore; }
 
+//on vérifie les collisions gauche/droite des ennemis
 function getMaxBound(){
 	
 	juennemi = document.getElementsByClassName('ennemy');
@@ -162,44 +178,8 @@ function conditionVictoire(){
 		if(nbMort == listMonstre.length){
 		//if(nbMort == 1){
 			_gameDestruct(false);
-			//stopSound("music");
+			stopSound("music");
 		}
-	}
-}
-
-//gestion des skins
-function loadSkin(){
-	var lect = gstats.stor.StorageLect('skin');
-	
-	if(lect != null){
-		gstats.skin = lect['skin'];
-	}
-}
-
-//quand le joueur selectionne un skin
-function initMenuSelectSkin(){
-	$.click(".item-skin", (function(e){
-		gstats.skin = this.dataset.skin;
-		gstats.stor.StorageEcrit('skin', {skin:gstats.skin});
-		changeSkinHero();
-	}));
-}
-//on change le skin du héro
-function changeSkinHero(){
-	var hero = document.getElementById("joueur");
-	hero.classList.add('hero-'+gstats.skin);
-}
-
-
-//gestion de session storage (on sauvegarde les stats, les skins etc du joueur)
-function storage(){
-	this.StorageLect = function(key){
-		var monobjet_json = sessionStorage.getItem(key);
-		return(JSON.parse(monobjet_json));
-	}
-	
-	this.StorageEcrit = function(key, val){
-		sessionStorage.setItem(key, JSON.stringify(val));
 	}
 }
 
@@ -212,6 +192,7 @@ function conditionDefaite(){
 		if (top >= lignevirtuel || pv == 0){
 			gstats_modif(Array('aGame', 'aOver'));
 			dstats_toggle(Array('dGame', 'dOver'));
+			 playSound('killPlayer');
 			_gameDestruct();
 		}
 	}
@@ -256,15 +237,16 @@ function shootEnnemyMove(){
 	if(gstats.aGame){ //on vérifie que le jeu soit lancé
 		var destroy = true;
 		var missile = document.querySelectorAll(".missileEnnemy");
-		var container=document.getElementById('container');
+		var container = document.getElementById('container');
 		for( var i = 0; i < missile.length; i ++ ) {
-				var posy = missile[i].offsetTop;
+			var posy = missile[i].offsetTop;
+			
 			if( posy <= (container.offsetHeight - missile[i].offsetHeight - 10)){
-					missile[i].style.top= (posy + 10) + "px";
+					missile[i].style.top= (posy + gstats.vEnnemiWeapon) + "px";
 					destroy = false;
 				}
 
-				if(destroy || collisionVaisseau(missile[i])){
+				if(destroy || collisionVaisseau(missile[i]) || boundShield(missile[i], "ENNEMI")){
 					removeDiv('dContainer', missile[i]);
 				}
 			}
@@ -287,10 +269,170 @@ function collisionVaisseau(elem){
 	}
 }
 
-function vie(_pv = ''){
-	if(_pv != ''){
+/* -- tout ce qui concerne les boucliers sont ici -- */
+/* initialisation des boucliers */
+
+
+var defaultShield = {
+	posx: 150, //position x 
+	posy: 300, //position y
+	sx: 10, //taille des sprites
+	sy: 10, //taille des sprites
+	lx: 6, //nombre de colonne
+	ly: 6, //nombre de ligne
+	tableau: false
+};
+
+//nombre de shield;
+var sh = new Array();
+function initShield(){
+	
+	var shield = document.querySelectorAll('.shield');
+
+	var a = new Array();
+	for(var ligne = 0; ligne < defaultShield.ly; ligne ++){
+		a.push(ligne);
+		a[ligne] = new Array();
+		for(var colonne = 0; colonne < defaultShield.lx; colonne ++){
+			a[ligne].push(colonne);
+			a[ligne][colonne] = new Array();
+			a[ligne][colonne].display = true;
+			a[ligne][colonne].pv = 10;
+		}
+	}
+	
+	defaultShield.tableau = new Array();
+	defaultShield.tableau.push(a);
+	
+	//show add div
+	for(var i = 0; i < shield.length; i ++){
+		//position du wall
+		wy = (gstats['dContainer'].offsetHeight * 70) / 100;
+		wx = (gstats['dContainer'].offsetWidth * (25 * i)) / 100;
+		
+		shield[i].style.top = wy + "px";
+		shield[i].style.left = (wx + 150) + "px";
+		//on multiplie le nombre de ligne et la taille des sprites pour avoir la taille du mur en lui même
+		shield[i].style.width = defaultShield['lx'] * defaultShield['sx']+"px";
+		shield[i].style.height = defaultShield['ly'] * defaultShield['sy']+"px";
+		//console.log(shield[i]);
+		for(var y = 0; y < defaultShield['ly']; y ++){
+			for(var x = 0; x < defaultShield['lx']; x ++){
+				var wall = document.createElement('div');
+				wall.classList.add('wall', 'wall-'+i+'-colonne-'+x);
+		
+				wall.style.top = (y * defaultShield.sy)+"px";
+				wall.style.left = (x * defaultShield.sx)+"px";
+				shield[i].appendChild(wall);
+			}
+		}
+		
+		
+	}
+}
+
+function boundShield(elem, type){
+	var shield = document.querySelectorAll('.shield');
+	boundElem = elem.getBoundingClientRect();
+	
+	for(var u = 0; u < shield.length; u ++){
+		var bound = shield[u].getBoundingClientRect();
+		//on vérifie que les coordonnées correspondent...
+		if(boundElem.left > bound.left && boundElem.left < (bound.left + bound.width) && 
+			boundElem.top > bound.top  && boundElem.top < (bound.top + bound.height)){
+			//coord = parseInt((bound.left - bound.left) + (10 * 5)) / elem.left;
+			
+			coord = parseInt(((boundElem.left + boundElem.width) - bound.left) / (defaultShield.lx * 2));
+			console.log(coord);
+			maxTop = 100000;
+			maxBottom = 0;
+			maxTopID = 0;
+			maxBottomID = 0;
+			if(coord < defaultShield.lx){
+				 var wall = document.querySelectorAll('.wall-'+u+'-colonne-'+coord );
+				//var wall2 = document.querySelectorAll('.wall-colonne-0')[0];
+				 for(var i = 0; i < wall.length; i++){ //valeur 15 temporaire
+					 var obj = wall[i].getBoundingClientRect();
+
+					 if(type == "ENNEMI"){
+						 if(wall[i].style.display != "none"){
+							 if(maxTop > obj.top){
+								maxTop = obj.top;
+								maxTopID = wall[i];
+								console.log("ok");
+							}
+						 }
+					 }
+					 if(type == "JOUEUR"){
+						if(wall[i].style.display != "none"){
+							if(maxBottom < obj.bottom){
+								maxBottom = obj.bottom;
+								maxBottomID = wall[i];
+							}
+						}
+						
+					 }
+				}
+				
+				// if(maxBottom > obj.bottom){
+					if(maxBottomID != 0){
+						maxBottomID.style.display = "none";
+						
+						return true;
+					}
+					
+					if(maxTopID != 0){
+						maxTopID.style.display = "none";
+						
+						return true;
+					}
+				// }
+				//.removeChild(maxBottomID);
+				
+				//return true;
+			}
+		}
+	}
+	
+	return false;
+}
+
+
+
+
+
+
+
+
+
+//joueur 
+function deplPlayer(dir){
+	var joueur = document.getElementById('joueur');
+	var widthCONTAINER = gstats['dContainer'].offsetWidth;
+	var joueurv = joueur.offsetWidth;
+		
+	if(dir == "GAUCHE"){
+		var i = joueur.offsetLeft;
+		 if(i > 10){
+			joueur.style.left = (i - gstats.vHero) + 'px';
+		}
+	}
+	else{
+		/* Pour la touche droite */
+		 var i = joueur.offsetLeft;
+		 if(i<(widthCONTAINER-(joueurv*1.3))){
+			joueur.style.left = (i + gstats.vHero) + 'px';
+		 }
+	}
+}
+
+//les points de vie du joueur (on les caches);
+function vie(_pv){
+	if(typeof _pv !== 'undefined'){
 		pv += _pv;
 	}
 	var vie1 = document.getElementById('vie-'+pv);
-	vie1.style.display="none";
+	vie1.style.display = "none";
 }
+
+
